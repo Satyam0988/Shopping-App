@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 // ignore: unused_import
 import 'package:shopping_app/shared/constants.dart';
-import 'package:shopping_app/widgets/editprofile.dart';
+import 'package:shopping_app/screens/settings/editprofile.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -49,11 +49,11 @@ class _ProfileState extends State<Profile> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 127.0),
+              padding: const EdgeInsets.only(left: 40.0),
               child: Text(
                 userProfileData.name,
                 style: TextStyle(
-                  color: Colors.grey[900],
+                  color: Colors.yellow[50],
                   fontSize: 26.0,
                   fontWeight: FontWeight.w400,
                 ),
@@ -67,7 +67,10 @@ class _ProfileState extends State<Profile> {
                 onPressed: () {
                   _showEditProfilePanel();
                 },
-                icon: Icon(Icons.edit),
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.yellow[50],
+                ),
               ),
             )
           ],

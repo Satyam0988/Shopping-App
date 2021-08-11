@@ -5,10 +5,10 @@ import 'package:shopping_app/screens/settings/orderslist.dart';
 import 'package:shopping_app/screens/settings/productslist.dart';
 import 'package:shopping_app/services/databse.dart';
 import 'package:shopping_app/shared/constants.dart';
-import 'package:shopping_app/widgets/profile.dart';
+import 'package:shopping_app/screens/settings/profile.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+  //const Settings({Key? key}) : super(key: key);
 
   @override
   _SettingsState createState() => _SettingsState();
@@ -18,9 +18,10 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<userClass?>(context);
+    final userProfileData = Provider.of<UserProfileData>(context);
 
     return Scaffold(
-      backgroundColor: Colors.yellow[50],
+      backgroundColor: Colors.grey[900],
       body: SingleChildScrollView(
         child: StreamProvider<UserProfileData>.value(
           value: DatabaseService(uid: user!.uid).userProfileData,
@@ -35,14 +36,14 @@ class _SettingsState extends State<Settings> {
               ),
               GestureDetector(
                 onTap: () {
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) => OrdersList()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => OrdersList()));
                 },
                 child: Container(
                   height: 80.0,
                   width: 370.0,
                   child: Card(
-                    color: Colors.white,
+                    color: Colors.yellow[50],
                     elevation: 5.0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -80,16 +81,19 @@ class _SettingsState extends State<Settings> {
                       MaterialPageRoute(
                           builder: (context) =>
                               StreamProvider<List<UserProductData>>.value(
-                                  value: DatabaseService(uid: user.uid)
-                                      .userProductsList,
-                                  initialData: <UserProductData>[],
-                                  child: ProductsList())));
+                                value: DatabaseService(uid: user.uid)
+                                    .userProductsList,
+                                initialData: <UserProductData>[],
+                                child: ProductsList(
+                                  soldBy: userProfileData.name,
+                                ),
+                              )));
                 },
                 child: Container(
                   height: 80.0,
                   width: 370.0,
                   child: Card(
-                    color: Colors.white,
+                    color: Colors.yellow[50],
                     elevation: 5.0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,

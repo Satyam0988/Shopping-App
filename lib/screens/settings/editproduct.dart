@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
@@ -9,15 +10,17 @@ import 'package:shopping_app/shared/loading.dart';
 import 'package:shopping_app/widgets/gradientappbar.dart';
 
 // ignore: camel_case_types
-class addProduct extends StatefulWidget {
-  const addProduct({Key? key}) : super(key: key);
+class editProduct extends StatefulWidget {
+  //const editProduct({Key? key}) : super(key: key);
+  final UserProductData product;
+  editProduct({required this.product});
 
   @override
-  _addProductState createState() => _addProductState();
+  _editProductState createState() => _editProductState();
 }
 
 // ignore: camel_case_types
-class _addProductState extends State<addProduct> {
+class _editProductState extends State<editProduct> {
   final _formKey = GlobalKey<FormState>();
 
   //form values
@@ -27,23 +30,31 @@ class _addProductState extends State<addProduct> {
   String _currentImage = "-1";
   String _currentVINnumber = "-1";
   String _currentDescription = "-1";
-  int _currentPrice = -1;
+  String _currentPrice = "-1";
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<userClass?>(context);
 
     return StreamBuilder<UserProductData>(
-        stream: DatabaseService(uid: user!.uid).userProductsList,
+        stream: DatabaseService(
+                uid: user!.uid,
+                CompanY: widget.product.company,
+                ModeL: widget.product.model,
+                ModelyeaR: widget.product.modelYear)
+            .userProductData,
         builder: (context, snapshot) {
+          print("snapshot : $snapshot");
+          print("snapshot data : ${snapshot.data}");
           if (snapshot.hasData) {
+            var userProductData = snapshot.data;
             return Scaffold(
-              backgroundColor: Colors.yellow[50],
+              backgroundColor: Colors.black,
               appBar: AppBar(
                 centerTitle: true,
-                backgroundColor: Colors.brown[900],
+                backgroundColor: Colors.grey[900],
                 title: Text(
-                  "Add a new Product",
+                  "Update this Product",
                   style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w900),
                 ),
               ),
@@ -64,12 +75,15 @@ class _addProductState extends State<addProduct> {
                             child: Text(
                               "Company",
                               style: TextStyle(
+                                color: Colors.yellow[50],
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            initialValue: userProductData!.company,
                             decoration: textInputDecoration,
                             validator: (val) => val!.isEmpty
                                 ? "Please enter a Company name"
@@ -88,12 +102,15 @@ class _addProductState extends State<addProduct> {
                             child: Text(
                               "Model",
                               style: TextStyle(
+                                color: Colors.yellow[50],
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            initialValue: userProductData.model,
                             decoration: textInputDecoration,
                             validator: (val) => val!.isEmpty
                                 ? "Please enter a Model name"
@@ -112,12 +129,15 @@ class _addProductState extends State<addProduct> {
                             child: Text(
                               "Model Year",
                               style: TextStyle(
+                                color: Colors.yellow[50],
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            initialValue: userProductData.modelYear,
                             decoration: textInputDecoration,
                             validator: (val) => val!.isEmpty
                                 ? "Please enter a Model Year"
@@ -136,12 +156,15 @@ class _addProductState extends State<addProduct> {
                             child: Text(
                               "VIN Number",
                               style: TextStyle(
+                                color: Colors.yellow[50],
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            initialValue: userProductData.vinnumber,
                             decoration: textInputDecoration,
                             validator: (val) => val!.isEmpty
                                 ? "Please enter a VIN Number"
@@ -160,12 +183,15 @@ class _addProductState extends State<addProduct> {
                             child: Text(
                               "Description",
                               style: TextStyle(
+                                color: Colors.yellow[50],
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            initialValue: userProductData.description,
                             decoration: textInputDecoration,
                             validator: (val) => val!.isEmpty
                                 ? "Please enter a Description"
@@ -184,12 +210,15 @@ class _addProductState extends State<addProduct> {
                             child: Text(
                               "Image URL",
                               style: TextStyle(
+                                color: Colors.yellow[50],
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            initialValue: userProductData.image,
                             decoration: textInputDecoration,
                             validator: (val) => val!.isEmpty
                                 ? "Please enter an Image URL"
@@ -208,35 +237,57 @@ class _addProductState extends State<addProduct> {
                             child: Text(
                               "Price",
                               style: TextStyle(
+                                color: Colors.yellow[50],
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
                           ),
                           TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            initialValue: userProductData.price,
                             decoration: textInputDecoration,
                             validator: (val) =>
                                 val!.isEmpty ? "Please enter a Price" : null,
                             onChanged: (val) {
                               setState(() {
-                                _currentPrice = int.parse(val);
+                                _currentPrice = val;
                               });
                             },
+                          ),
+                          SizedBox(
+                            height: 20.0,
                           ),
                           GestureDetector(
                             onTap: () async {
                               if (_formKey.currentState!.validate()) {
-                                UserProductData product = UserProductData(
-                                    user.uid,
-                                    _currentCompany,
-                                    _currentModel,
-                                    _currentModelYear,
-                                    _currentImage,
-                                    _currentVINnumber,
-                                    _currentDescription,
-                                    _currentPrice);
                                 await DatabaseService(uid: user.uid)
-                                    .addUserProductsData(product);
+                                    .editUserProductsData(
+                                        userProductData.company,
+                                        userProductData.model,
+                                        userProductData.modelYear,
+                                        userProductData.soldBy,
+                                        (_currentCompany == "-1")
+                                            ? userProductData.company
+                                            : _currentCompany,
+                                        (_currentModel == "-1")
+                                            ? userProductData.model
+                                            : _currentModel,
+                                        (_currentModelYear == "-1")
+                                            ? userProductData.modelYear
+                                            : _currentModelYear,
+                                        (_currentImage == "-1")
+                                            ? userProductData.image
+                                            : _currentImage,
+                                        (_currentPrice == "-1")
+                                            ? userProductData.price
+                                            : _currentPrice,
+                                        (_currentVINnumber == "-1")
+                                            ? userProductData.vinnumber
+                                            : _currentVINnumber,
+                                        (_currentDescription == "-1")
+                                            ? userProductData.description
+                                            : _currentDescription);
                                 Navigator.pop(context);
                               }
                             },
@@ -244,12 +295,12 @@ class _addProductState extends State<addProduct> {
                               width: 150.0,
                               height: 50.0,
                               decoration: BoxDecoration(
-                                color: Colors.brown[900],
+                                color: Colors.green,
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
                               child: Center(
                                 child: Text(
-                                  "Add",
+                                  "Update",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20.0,

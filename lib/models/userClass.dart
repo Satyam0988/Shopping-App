@@ -12,23 +12,26 @@ class UserProfileData {
   UserProfileData({required this.image, required this.name, required this.uid});
 }
 
-// class UserProductsList {
-//   final String uid;
-//   final List products;
-
-//   UserProductsList({required this.products, required this.uid});
-// }
-
 class UserProductData {
   final String uid;
+  final String soldBy;
   final String company;
   final String model;
   final String modelYear;
   final String image;
   final String vinnumber;
   final String description;
-  final int price;
+  final String price;
 
-  UserProductData(this.uid, this.company, this.model, this.modelYear,
-      this.image, this.vinnumber, this.description, this.price);
+  UserProductData({
+    required this.uid,
+    required this.soldBy,
+    required this.price,
+    required this.company,
+    required this.description,
+    required this.image,
+    required this.model,
+    required this.modelYear,
+    required this.vinnumber,
+  });
 }

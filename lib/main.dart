@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
       value: AuthService().user,
       initialData: null,
       child: MaterialApp(
+        theme: ThemeData(fontFamily: 'Overlock'),
         home: Wrapper(),
       ),
     );

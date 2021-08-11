@@ -73,7 +73,7 @@ class _editProfileState extends State<editProfile> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Profile Pic",
+                      "Image URL",
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.w300,
@@ -97,33 +97,22 @@ class _editProfileState extends State<editProfile> {
                   GestureDetector(
                     onTap: () async {
                       if (_formKey.currentState!.validate()) {
-                        if (_currentName == "0" && _currentImage == "0") {
-                          Navigator.pop(context);
-                        } else if (_currentName == "0" &&
-                            _currentImage != "0") {
-                          await DatabaseService(uid: user.uid)
-                              .updateUserProfileData(
-                                  userProfileData.name, _currentImage);
-                          Navigator.pop(context);
-                        } else if (_currentName != "0" &&
-                            _currentImage == "0") {
-                          await DatabaseService(uid: user.uid)
-                              .updateUserProfileData(
-                                  _currentName, userProfileData.image);
-                          Navigator.pop(context);
-                        } else {
-                          await DatabaseService(uid: user.uid)
-                              .updateUserProfileData(
-                                  _currentName, _currentImage);
-                          Navigator.pop(context);
-                        }
+                        await DatabaseService(uid: user.uid)
+                            .updateUserProfileData(
+                                (_currentName == "0")
+                                    ? userProfileData.name
+                                    : _currentName,
+                                (_currentImage == "0")
+                                    ? userProfileData.image
+                                    : _currentImage);
+                        Navigator.pop(context);
                       }
                     },
                     child: Container(
                       width: 150.0,
                       height: 50.0,
                       decoration: BoxDecoration(
-                        color: Colors.brown[900],
+                        color: Colors.green,
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: Center(

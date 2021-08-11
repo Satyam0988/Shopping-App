@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
-import 'package:shopping_app/widgets/addproductform.dart';
-import 'package:shopping_app/widgets/producttile.dart';
+import 'package:shopping_app/screens/settings/addproductform.dart';
+import 'package:shopping_app/screens/settings/producttile.dart';
 
 class ProductsList extends StatefulWidget {
-  const ProductsList({Key? key}) : super(key: key);
+  //const ProductsList({Key? key}) : super(key: key);
+  final String soldBy;
+  ProductsList({required this.soldBy});
 
   @override
   _ProductsListState createState() => _ProductsListState();
@@ -18,13 +20,16 @@ class _ProductsListState extends State<ProductsList> {
     final Products = Provider.of<List<UserProductData>>(context);
 
     return Scaffold(
-      backgroundColor: Colors.yellow[50],
+      backgroundColor: Colors.black,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.brown[900],
+        backgroundColor: Colors.grey[900],
         title: Text(
           "Your Products",
-          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w900),
+          style: TextStyle(
+              color: Colors.yellow[50],
+              fontSize: 24.0,
+              fontWeight: FontWeight.w900),
         ),
       ),
       body: (Products.length == 0)
@@ -34,8 +39,8 @@ class _ProductsListState extends State<ProductsList> {
                 Text(
                   "You don't have any products in your list, click the button below to add a new product",
                   style: TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.grey[900],
+                    fontSize: 24.0,
+                    color: Colors.yellow[50],
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -43,27 +48,57 @@ class _ProductsListState extends State<ProductsList> {
                   height: 25.0,
                 ),
                 FloatingActionButton(
-                    child: Icon(Icons.add),
+                    backgroundColor: Colors.green,
+                    child: Icon(
+                      Icons.add,
+                      size: 40.0,
+                    ),
                     onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => addProduct()));
+                              builder: (context) => addProduct(
+                                    soldBy: widget.soldBy,
+                                  )));
                     }),
               ],
             ))
-          : (ListView(
+          : (Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                ListView.builder(
-                  itemCount: Products.length,
-                  itemBuilder: (context, index) {
-                    return ProductTile(product: Products[index]);
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: Products.length,
+                    itemBuilder: (context, index) {
+                      return ProductTile(product: Products[index]);
+                    },
+                  ),
                 ),
-                FloatingActionButton(onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => addProduct()));
-                }),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      right: 10.0, bottom: 10.0, top: 15.0),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: FloatingActionButton(
+                        tooltip: "Add a new Product",
+                        backgroundColor: Colors.green,
+                        child: Icon(
+                          Icons.add,
+                          size: 40.0,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => addProduct(
+                                        soldBy: widget.soldBy,
+                                      )));
+                        }),
+                  ),
+                ),
               ],
             )),
     );

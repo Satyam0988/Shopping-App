@@ -62,17 +62,32 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: Overlock
+      fonts:
+        - asset: assets/fonts/Overlock/Overlock-Bold.ttf
+        - asset: assets/fonts/Overlock/Overlock-Black.ttf
+        - asset: assets/fonts/Overlock/Overlock-BlackItalic.ttf
+        - asset: assets/fonts/Overlock/Overlock-BoldItalic.ttf
+        - asset: assets/fonts/Overlock/Overlock-Italic.ttf
+        - asset: assets/fonts/Overlock/Overlock-Regular.ttf
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito/Nunito-Black.ttf
+        - asset: assets/fonts/Nunito/Nunito-BlackItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-Bold.ttf
+        - asset: assets/fonts/Nunito/Nunito-BoldItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-ExtraBold.ttf
+        - asset: assets/fonts/Nunito/Nunito-ExtraBoldItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-ExtraLight.ttf
+        - asset: assets/fonts/Nunito/Nunito-ExtraLightItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-Italic.ttf
+        - asset: assets/fonts/Nunito/Nunito-Light.ttf
+        - asset: assets/fonts/Nunito/Nunito-LightItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-SemiBold.ttf
+        - asset: assets/fonts/Nunito/Nunito-SemiBoldItalic.ttf
+        
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

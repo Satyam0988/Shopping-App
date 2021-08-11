@@ -27,6 +27,7 @@ class _SignInState extends State<SignIn> {
     return loading
         ? Loading()
         : Scaffold(
+            backgroundColor: Colors.yellow[50],
             body: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -44,7 +45,7 @@ class _SignInState extends State<SignIn> {
                           style: TextStyle(
                             fontSize: 42.0,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.yellow[50],
                             //fontFamily:
                           ),
                         ),
@@ -56,7 +57,7 @@ class _SignInState extends State<SignIn> {
                           style: TextStyle(
                             fontSize: 32.0,
                             fontWeight: FontWeight.normal,
-                            color: Colors.white,
+                            color: Colors.yellow[50],
                             //fontFamily:
                           ),
                         ),
@@ -89,7 +90,20 @@ class _SignInState extends State<SignIn> {
                               fontSize: 18.0,
                               //fontFamily: ,
                             ),
-                            decoration: textInputDecoration,
+                            decoration: InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade900,
+                                  width: 1.5,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.black,
+                                  width: 2.75,
+                                ),
+                              ),
+                            ),
                             validator: (val) =>
                                 val!.isEmpty ? "Please enter an email" : null,
                             onChanged: (val) {
@@ -117,7 +131,20 @@ class _SignInState extends State<SignIn> {
                               fontSize: 18.0,
                               //fontFamily: ,
                             ),
-                            decoration: textInputDecoration,
+                            decoration: InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade900,
+                                  width: 1.5,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.black,
+                                  width: 2.75,
+                                ),
+                              ),
+                            ),
                             validator: (val) => val!.length < 8
                                 ? "Password should be longer than 8 characters"
                                 : null,
@@ -164,7 +191,7 @@ class _SignInState extends State<SignIn> {
                                       "SIGN IN",
                                       style: TextStyle(
                                           fontSize: 22.0,
-                                          color: Colors.white,
+                                          color: Colors.yellow[50],
                                           //fontfamily: ,
                                           fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,
@@ -191,6 +218,7 @@ class _SignInState extends State<SignIn> {
                   Text(
                     "Don't have an account?",
                     style: TextStyle(
+                      color: Colors.grey[900],
                       fontSize: 18.0,
                     ),
                   ),
@@ -216,7 +244,7 @@ class _SignInState extends State<SignIn> {
                               "REGISTER",
                               style: TextStyle(
                                   fontSize: 20.0,
-                                  color: Colors.white,
+                                  color: Colors.yellow[50],
                                   //fontfamily: ,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,

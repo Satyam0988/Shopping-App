@@ -17,7 +17,7 @@ class _searchBoxState extends State<searchBox> {
         width: 150.0,
         height: 40.0,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.yellow[50],
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: Row(

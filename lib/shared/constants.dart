@@ -2,26 +2,27 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-const textInputDecoration = InputDecoration(
+InputDecoration textInputDecoration = InputDecoration(
   enabledBorder: UnderlineInputBorder(
     borderSide: BorderSide(
-      color: Colors.grey,
-      width: 1.25,
+      color: Colors.grey.shade100,
+      width: 1.5,
     ),
   ),
   focusedBorder: UnderlineInputBorder(
     borderSide: BorderSide(
-      color: Colors.black,
-      width: 2.5,
+      color: Colors.yellow.shade50,
+      width: 2.75,
     ),
   ),
 );
 
-const customBoxDecoration = BoxDecoration(
-  gradient: LinearGradient(
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
-      colors: [Color(0xFFFFBF00), Color(0xFFFF6A2B)]),
+BoxDecoration customBoxDecoration = BoxDecoration(
+  color: Colors.black,
+  // gradient: LinearGradient(
+  //     begin: Alignment.centerLeft,
+  //     end: Alignment.centerRight,
+  //     colors: [Color(0xFFFFBF00), Color(0xFFFF6A2B)]),
 );
 
 const iconContainerDecoration = BoxDecoration(
@@ -32,7 +33,7 @@ const iconContainerDecoration = BoxDecoration(
 
 BoxDecoration selectedContainerDecoration = BoxDecoration(
   border: Border(
-    top: BorderSide(width: 3.5, color: Colors.brown.shade900),
+    top: BorderSide(width: 3.5, color: Colors.green),
   ),
 );
 

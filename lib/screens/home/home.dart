@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_app/models/userClass.dart';
+import 'package:shopping_app/screens/home/homecontent.dart';
 import 'package:shopping_app/screens/logout/logout.dart';
 import 'package:shopping_app/screens/settings/settings.dart';
+import 'package:shopping_app/services/databse.dart';
 import 'package:shopping_app/shared/constants.dart';
-import 'package:shopping_app/widgets/bottomnavbar.dart';
-import 'package:shopping_app/widgets/searchBox.dart';
+import 'package:shopping_app/screens/home/bottomnavbar.dart';
+import 'package:shopping_app/screens/home/searchBox.dart';
 
 class Home extends StatefulWidget {
   //const Home({Key? key}) : super(key: key);
@@ -13,6 +17,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String dropdownValue = "All Products";
   late PageController _pageController = PageController();
   int selected = 1;
 
@@ -28,6 +33,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<userClass?>(context);
+
     return Scaffold(
       bottomNavigationBar: bottomNavBar(
         selected: selected,
@@ -41,10 +48,10 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Container(
             width: double.infinity,
-            height: 100.0,
+            height: 80.0,
             decoration: customBoxDecoration,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 10.0),
+              padding: EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -73,7 +80,7 @@ class _HomeState extends State<Home> {
                       width: 60.0,
                       height: 40.0,
                       decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Colors.yellow[50],
                           borderRadius: BorderRadius.circular(15.0)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -98,6 +105,48 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
+          if (selected == 1)
+            Container(
+              padding: EdgeInsets.only(
+                left: 250.0,
+              ),
+              height: 50.0,
+              width: double.infinity,
+              decoration: customBoxDecoration,
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                    dropdownColor: Colors.black,
+                    value: dropdownValue,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white,
+                    ),
+                    iconSize: 32.0,
+                    elevation: 0,
+                    onChanged: (newValue) {
+                      setState(() {
+                        dropdownValue = newValue.toString();
+                      });
+                    },
+                    items: <String>["All Products", "Your Products"]
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
           //content to display
           Expanded(
             child: PageView(
@@ -108,17 +157,28 @@ class _HomeState extends State<Home> {
                 });
               },
               children: <Widget>[
-                Container(
-                  child: Center(
-                    child: Text("HomePage"),
-                  ),
-                ),
+                if (dropdownValue == "All Products")
+                  StreamProvider<List<UserProductData>>.value(
+                      value: DatabaseService().allUsersProductsList,
+                      initialData: <UserProductData>[],
+                      child: homeContent()),
+                if (dropdownValue == "Your Products")
+                  StreamProvider<List<UserProductData>>.value(
+                      value: DatabaseService(uid: user!.uid).userProductsList,
+                      initialData: <UserProductData>[],
+                      child: homeContent()),
                 Container(
                   child: Center(
                     child: Text("Favorites"),
                   ),
                 ),
-                Settings(),
+                StreamProvider<UserProfileData>.value(
+                    value: DatabaseService(uid: user!.uid).userProfileData,
+                    initialData: UserProfileData(
+                        image: defaultImageURL,
+                        name: "New Member",
+                        uid: user.uid),
+                    child: Settings()),
                 Container(
                   child: Center(
                     child: Text("Cart"),

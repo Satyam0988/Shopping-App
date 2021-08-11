@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shopping_app/shared/constants.dart';
 
 // ignore: camel_case_types
-// ignore: must_be_immutable
-// ignore: camel_case_types
-// ignore: must_be_immutable
-// ignore: camel_case_types
-// ignore: must_be_immutable
 class bottomNavBar extends StatefulWidget {
   //const bottomNavBar({Key? key}) : super(key: key);
   int selected;
@@ -41,7 +36,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
               },
               icon: Icon(Icons.home),
               iconSize: 35.0,
-              color: (_selected == 1) ? Colors.brown[900] : Colors.yellow[50],
+              color: (_selected == 1) ? Colors.green : Colors.yellow[50],
             ),
           ),
           Container(
@@ -56,7 +51,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
               },
               icon: Icon(Icons.favorite),
               iconSize: 35.0,
-              color: (_selected == 2) ? Colors.brown[900] : Colors.yellow[50],
+              color: (_selected == 2) ? Colors.green : Colors.yellow[50],
             ),
           ),
           Container(
@@ -71,7 +66,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
               },
               icon: Icon(Icons.settings),
               iconSize: 35.0,
-              color: (_selected == 3) ? Colors.brown[900] : Colors.yellow[50],
+              color: (_selected == 3) ? Colors.green : Colors.yellow[50],
             ),
           ),
           Container(
@@ -86,7 +81,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
               },
               icon: Icon(Icons.shopping_bag),
               iconSize: 35.0,
-              color: (_selected == 4) ? Colors.brown[900] : Colors.yellow[50],
+              color: (_selected == 4) ? Colors.green : Colors.yellow[50],
             ),
           ),
           Container(
@@ -101,8 +96,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
                 },
                 icon: Icon(Icons.logout),
                 iconSize: 35.0,
-                color:
-                    (_selected == 5) ? Colors.brown[900] : Colors.yellow[50]),
+                color: (_selected == 5) ? Colors.green : Colors.yellow[50]),
           ),
         ],
       ),
