@@ -21,7 +21,7 @@ class _FavoritesListState extends State<FavoritesList> {
             ? Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "You haven't added any\n Products to Favorites yet.",
+                  "   You haven't added any\n Products to Favorites yet.",
                   style: TextStyle(color: Colors.yellow[50], fontSize: 32.0),
                 ),
               )

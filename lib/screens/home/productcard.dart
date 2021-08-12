@@ -51,7 +51,7 @@ class _ProductCardState extends State<ProductCard> {
               MaterialPageRoute(
                 builder: (context) =>
                     StreamProvider<List<UserProductData>>.value(
-                        value: DatabaseService(uid: user!.uid).userCartlist,
+                        value: DatabaseService(uid: user.uid).userCartlist,
                         initialData: <UserProductData>[],
                         child: ProductPage(
                           product: widget.product,

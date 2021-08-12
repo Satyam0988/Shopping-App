@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/services/databse.dart';
+import 'package:shopping_app/shared/errordialog.dart';
 
 class ProductPage extends StatefulWidget {
   final UserProductData product;
@@ -20,6 +21,14 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   bool addedToCart = false;
   bool addedToFavorites = false;
+
+  Future<void> _showErrorDialog(String error) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return errorDialog(error: error);
+        });
+  }
 
   @override
   void initState() {
@@ -140,29 +149,51 @@ class _ProductPageState extends State<ProductPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         addedToFavorites = !addedToFavorites;
-                        addedToFavorites
-                            ? DatabaseService(uid: user!.uid)
-                                .addProductToFavorites(
-                                    widget.product.soldBy,
-                                    widget.product.sellerUID,
-                                    widget.product.company,
-                                    widget.product.model,
-                                    widget.product.modelYear,
-                                    widget.product.image,
-                                    widget.product.price,
-                                    widget.product.vinnumber,
-                                    widget.product.description)
-                            : DatabaseService(
-                                    uid: user!.uid,
-                                    CompanY: widget.product.company,
-                                    ModeL: widget.product.model,
-                                    ModelyeaR: widget.product.modelYear,
-                                    SelleruiD: widget.product.sellerUID)
-                                .deleteProductFromFavorites();
                       });
+                      if (addedToFavorites == true) {
+                        dynamic result = await DatabaseService(uid: user!.uid)
+                            .addProductToFavorites(
+                                widget.product.soldBy,
+                                widget.product.sellerUID,
+                                widget.product.company,
+                                widget.product.model,
+                                widget.product.modelYear,
+                                widget.product.image,
+                                widget.product.price,
+                                widget.product.vinnumber,
+                                widget.product.description);
+                        if (result != null) {
+                          setState(() {
+                            addedToFavorites = false;
+                            _showErrorDialog("Could not add to Favorites");
+                          });
+                        } else {
+                          setState(() {
+                            addedToFavorites = true;
+                          });
+                        }
+                      } else if (addedToFavorites == false) {
+                        dynamic result = await DatabaseService(
+                                uid: user!.uid,
+                                CompanY: widget.product.company,
+                                ModeL: widget.product.model,
+                                ModelyeaR: widget.product.modelYear,
+                                SelleruiD: widget.product.sellerUID)
+                            .deleteProductFromFavorites();
+                        if (result != null) {
+                          setState(() {
+                            addedToFavorites = true;
+                            _showErrorDialog("Could not Delete from Favorites");
+                          });
+                        } else {
+                          setState(() {
+                            addedToFavorites = false;
+                          });
+                        }
+                      }
                     },
                     child: Container(
                         height: 50.0,
@@ -179,11 +210,13 @@ class _ProductPageState extends State<ProductPage> {
                         )),
                   ),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         addedToCart = !addedToCart;
-                        addedToCart
-                            ? DatabaseService(uid: user!.uid).addProductToCart(
+                      });
+                      if (addedToCart == true) {
+                        dynamic result = await DatabaseService(uid: user!.uid)
+                            .addProductToCart(
                                 widget.product.soldBy,
                                 widget.product.sellerUID,
                                 widget.product.company,
@@ -192,15 +225,36 @@ class _ProductPageState extends State<ProductPage> {
                                 widget.product.image,
                                 widget.product.price,
                                 widget.product.vinnumber,
-                                widget.product.description)
-                            : DatabaseService(
-                                    uid: user!.uid,
-                                    CompanY: widget.product.company,
-                                    ModeL: widget.product.model,
-                                    ModelyeaR: widget.product.modelYear,
-                                    SelleruiD: widget.product.sellerUID)
-                                .deleteProductFromCart();
-                      });
+                                widget.product.description);
+                        if (result != null) {
+                          setState(() {
+                            addedToCart = false;
+                            _showErrorDialog("Could not add to Cart");
+                          });
+                        } else {
+                          setState(() {
+                            addedToCart = true;
+                          });
+                        }
+                      } else if (addedToCart == false) {
+                        dynamic result = await DatabaseService(
+                                uid: user!.uid,
+                                CompanY: widget.product.company,
+                                ModeL: widget.product.model,
+                                ModelyeaR: widget.product.modelYear,
+                                SelleruiD: widget.product.sellerUID)
+                            .deleteProductFromCart();
+                        if (result != null) {
+                          setState(() {
+                            addedToCart = true;
+                            _showErrorDialog("Could not Delete from Cart");
+                          });
+                        } else {
+                          setState(() {
+                            addedToCart = false;
+                          });
+                        }
+                      }
                     },
                     child: Container(
                       height: 50.0,

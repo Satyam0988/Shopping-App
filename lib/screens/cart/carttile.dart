@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/screens/home/productpage.dart';
 import 'package:shopping_app/services/databse.dart';
+import 'package:shopping_app/shared/errordialog.dart';
 
 class CartTile extends StatefulWidget {
   //const CartTile({ Key? key }) : super(key: key);
@@ -14,6 +15,14 @@ class CartTile extends StatefulWidget {
 }
 
 class _CartTileState extends State<CartTile> {
+  Future<void> _showErrorDialog(String error) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return errorDialog(error: error);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<userClass?>(context);
@@ -50,7 +59,7 @@ class _CartTileState extends State<CartTile> {
               MaterialPageRoute(
                   builder: (context) =>
                       StreamProvider<List<UserProductData>>.value(
-                        value: DatabaseService(uid: user!.uid).userCartlist,
+                        value: DatabaseService(uid: user.uid).userCartlist,
                         initialData: <UserProductData>[],
                         child: ProductPage(
                           product: widget.product,
@@ -79,14 +88,17 @@ class _CartTileState extends State<CartTile> {
               ),
             ),
             trailing: IconButton(
-              onPressed: () {
-                DatabaseService(
-                        uid: user!.uid,
+              onPressed: () async {
+                dynamic result = await DatabaseService(
+                        uid: user.uid,
                         CompanY: widget.product.company,
                         ModeL: widget.product.model,
                         ModelyeaR: widget.product.modelYear,
                         SelleruiD: widget.product.sellerUID)
                     .deleteProductFromCart();
+                if (result != null) {
+                  _showErrorDialog("Could not Delete from Cart");
+                }
               },
               icon: Icon(
                 Icons.delete,

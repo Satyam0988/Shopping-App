@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/screens/cart/carttile.dart';
 import 'package:shopping_app/services/databse.dart';
+import 'package:shopping_app/shared/errordialog.dart';
 
 class Cart extends StatefulWidget {
   //const Cart({Key? key}) : super(key: key);
@@ -12,6 +13,55 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  Future<void> _showErrorDialog(String error) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return errorDialog(error: error);
+        });
+  }
+
+  Future<void> _showOrderPlacedDialog() async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              height: 250.0,
+              child: AlertDialog(
+                backgroundColor: Colors.yellow[50],
+                insetPadding: EdgeInsets.only(top: 230.0, bottom: 230.0),
+                elevation: 5.0,
+                title: Text(
+                  "Order Placed",
+                  style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold),
+                ),
+                content: Center(
+                  child: Text(
+                    "Order Placed Successfully!",
+                    style: TextStyle(color: Colors.black, fontSize: 20.0),
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "OK",
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ],
+              ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<userClass?>(context);
@@ -41,11 +91,19 @@ class _CartState extends State<Cart> {
                       padding:
                           EdgeInsets.only(left: 12.0, right: 12.0, top: 15.0),
                       child: GestureDetector(
-                        onTap: () {
-                          DatabaseService(uid: user!.uid)
+                        onTap: () async {
+                          dynamic result = await DatabaseService(uid: user!.uid)
                               .placeOrder(products, billValue);
-                          DatabaseService(uid: user.uid)
+                          if (result != null) {
+                            _showErrorDialog("Could not place Order");
+                          }
+                          dynamic res = await DatabaseService(uid: user.uid)
                               .deleteAllProductsFromCart();
+                          if (res != null) {
+                            _showErrorDialog("Could not place Order");
+                          } else {
+                            _showOrderPlacedDialog();
+                          }
                         },
                         child: Container(
                           height: 60.0,

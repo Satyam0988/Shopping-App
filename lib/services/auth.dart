@@ -11,23 +11,8 @@ class AuthService {
 
   //auth change user stream
   Stream<userClass?> get user {
-    return _auth
-        .authStateChanges()
-        //.map((User? user) => _userFromFirebaseUser(user));
-        .map(_userFromFirebaseUser);
+    return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
-
-  //sign in anonymously
-  // Future signInAnon() async {
-  //   try {
-  //     UserCredential result = await _auth.signInAnonymously();
-  //     User? user = result.user;
-  //     return _userFromFirebaseUser(user);
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
 
   //sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {

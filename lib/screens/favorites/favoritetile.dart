@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/screens/home/productpage.dart';
 import 'package:shopping_app/services/databse.dart';
+import 'package:shopping_app/shared/errordialog.dart';
 
 class FavoriteTile extends StatefulWidget {
   //const FavoriteTile({ Key? key }) : super(key: key);
@@ -14,6 +15,14 @@ class FavoriteTile extends StatefulWidget {
 }
 
 class _FavoriteTileState extends State<FavoriteTile> {
+  Future<void> _showErrorDialog(String error) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return errorDialog(error: error);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<userClass?>(context);
@@ -106,14 +115,17 @@ class _FavoriteTileState extends State<FavoriteTile> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: IconButton(
-                  onPressed: () {
-                    DatabaseService(
-                            uid: user!.uid,
+                  onPressed: () async {
+                    dynamic result = await DatabaseService(
+                            uid: user.uid,
                             CompanY: widget.product.company,
                             ModeL: widget.product.model,
                             ModelyeaR: widget.product.modelYear,
                             SelleruiD: widget.product.sellerUID)
                         .deleteProductFromFavorites();
+                    if (result != null) {
+                      _showErrorDialog("Could not Delete from Favorites");
+                    }
                   },
                   icon: Icon(
                     Icons.delete,

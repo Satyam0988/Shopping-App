@@ -5,6 +5,7 @@ import 'package:shopping_app/screens/home/productpage.dart';
 import 'package:shopping_app/services/databse.dart';
 import 'package:shopping_app/shared/constants.dart';
 import 'package:shopping_app/screens/settings/editproduct.dart';
+import 'package:shopping_app/shared/errordialog.dart';
 
 class ProductTile extends StatefulWidget {
   //const ProductTile({ Key? key }) : super(key: key);
@@ -20,6 +21,15 @@ class _ProductTileState extends State<ProductTile> {
   Widget build(BuildContext context) {
     final user = Provider.of<userClass?>(context);
     bool addedToFavorites = false;
+
+    Future<void> _showErrorDialog(String error) async {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return errorDialog(error: error);
+          });
+    }
+
     DatabaseService(
             uid: user!.uid,
             CompanY: widget.product.company,
@@ -100,13 +110,16 @@ class _ProductTileState extends State<ProductTile> {
                     constraints: BoxConstraints(),
                   ),
                   IconButton(
-                    onPressed: () {
-                      DatabaseService(
-                              uid: user!.uid,
+                    onPressed: () async {
+                      dynamic result = DatabaseService(
+                              uid: user.uid,
                               CompanY: widget.product.company,
                               ModeL: widget.product.model,
                               ModelyeaR: widget.product.modelYear)
                           .deleteProduct();
+                      if (result == null) {
+                        _showErrorDialog("Could not delete Product");
+                      }
                     },
                     icon: Icon(Icons.delete),
                     padding: EdgeInsets.only(left: 5.0),

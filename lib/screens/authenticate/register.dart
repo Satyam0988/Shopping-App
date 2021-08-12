@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_app/services/auth.dart';
 import 'package:shopping_app/shared/constants.dart';
+import 'package:shopping_app/shared/errordialog.dart';
 import 'package:shopping_app/shared/loading.dart';
 
 class Register extends StatefulWidget {
@@ -21,6 +22,14 @@ class _RegisterState extends State<Register> {
   String email = '';
   String password = '';
   String error = '';
+
+  Future<void> _showErrorDialog(String error) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return errorDialog(error: error);
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +95,10 @@ class _RegisterState extends State<Register> {
                             ),
                           ),
                           TextFormField(
+                            autofocus: true,
+                            textInputAction: TextInputAction.next,
                             style: TextStyle(
                               fontSize: 18.0,
-                              //fontFamily: ,
                             ),
                             decoration: InputDecoration(
                               enabledBorder: UnderlineInputBorder(
@@ -127,6 +137,7 @@ class _RegisterState extends State<Register> {
                             ),
                           ),
                           TextFormField(
+                            textInputAction: TextInputAction.done,
                             style: TextStyle(
                               fontSize: 18.0,
                               //fontFamily: ,
@@ -169,8 +180,9 @@ class _RegisterState extends State<Register> {
                                         email, password);
                                 if (result == null) {
                                   error =
-                                      "Could not register with those credentials";
+                                      "Could not Register with those Credentials";
                                   loading = false;
+                                  _showErrorDialog(error);
                                 }
                               }
                             },
@@ -201,13 +213,6 @@ class _RegisterState extends State<Register> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 20.0,
-                          ),
-                          Text(
-                            error,
-                            style: TextStyle(fontSize: 18.0, color: Colors.red),
-                          ),
                         ],
                       ),
                     ),
@@ -230,7 +235,7 @@ class _RegisterState extends State<Register> {
                       widget.toggleView();
                     },
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
                       child: Align(
                         alignment: Alignment.center,
                         child: Container(

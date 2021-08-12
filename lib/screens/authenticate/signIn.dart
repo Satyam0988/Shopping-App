@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_app/services/auth.dart';
 import 'package:shopping_app/shared/constants.dart';
+import 'package:shopping_app/shared/errordialog.dart';
 import 'package:shopping_app/shared/loading.dart';
 
 class SignIn extends StatefulWidget {
@@ -16,11 +17,20 @@ class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formkey = GlobalKey<FormState>();
   bool loading = false;
+  bool _autoFocus = true;
 
   //text field state
   String email = '';
   String password = '';
   String error = '';
+
+  Future<void> _showErrorDialog(String error) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return errorDialog(error: error);
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +96,8 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                           TextFormField(
+                            autofocus: _autoFocus,
+                            textInputAction: TextInputAction.next,
                             style: TextStyle(
                               fontSize: 18.0,
                               //fontFamily: ,
@@ -127,6 +139,7 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                           TextFormField(
+                            textInputAction: TextInputAction.done,
                             style: TextStyle(
                               fontSize: 18.0,
                               //fontFamily: ,
@@ -168,9 +181,13 @@ class _SignInState extends State<SignIn> {
                                     await _auth.signInWithEmailAndPassword(
                                         email, password);
                                 if (result == null) {
+                                  setState(() {
+                                    loading = false;
+                                    _autoFocus = false;
+                                  });
                                   error =
-                                      "Could not sign in with those credentials";
-                                  loading = false;
+                                      "Could not Sign In with those Credentials";
+                                  _showErrorDialog(error);
                                 }
                               }
                             },
@@ -201,13 +218,6 @@ class _SignInState extends State<SignIn> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 20.0,
-                          ),
-                          Text(
-                            error,
-                            style: TextStyle(fontSize: 18.0, color: Colors.red),
-                          ),
                         ],
                       ),
                     ),
@@ -230,7 +240,7 @@ class _SignInState extends State<SignIn> {
                       widget.toggleView();
                     },
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
                       child: Align(
                         alignment: Alignment.center,
                         child: Container(

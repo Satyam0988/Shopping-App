@@ -27,13 +27,14 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("All Products");
 
   Future setUserData() async {
-    var batch = userCollection.firestore.batch();
-    batch
-        .set(userCollection.doc(uid).collection("Profile").doc("ProfileData"), {
+    return await userCollection
+        .doc(uid)
+        .collection("Profile")
+        .doc("ProfileData")
+        .set({
       "name": "New Member",
       "image": defaultImageURL,
     });
-    return await batch.commit();
   }
 
   Future updateUserProfileData(String name, String image) async {
@@ -41,7 +42,11 @@ class DatabaseService {
         .doc(uid)
         .collection("Profile")
         .doc("ProfileData")
-        .set({"name": name, "image": image});
+        .set({"name": name, "image": image})
+        .then((value) => print("Updated User Profile Data"))
+        .catchError((error) {
+          return error;
+        });
   }
 
   Future addUserProductsData(
@@ -53,32 +58,42 @@ class DatabaseService {
       String price,
       String vinnumber,
       String description) async {
-    allProductsCollection.doc("$company-$model-$modelYear-$uid").set({
-      "sellerUID": uid,
-      "soldBy": soldBy,
-      "company": company,
-      "model": model,
-      "modelYear": modelYear,
-      "image": image,
-      "price": price,
-      "vinnumber": vinnumber,
-      "description": description
-    });
+    allProductsCollection
+        .doc("$company-$model-$modelYear-$uid")
+        .set({
+          "sellerUID": uid,
+          "soldBy": soldBy,
+          "company": company,
+          "model": model,
+          "modelYear": modelYear,
+          "image": image,
+          "price": price,
+          "vinnumber": vinnumber,
+          "description": description
+        })
+        .then((value) => print("Added Product to All Products Collection"))
+        .catchError((error) {
+          return error;
+        });
     return await userProductsCollection
         .doc(uid)
         .collection("Products")
         .doc("$company-$model-$modelYear")
         .set({
-      "sellerUID": uid,
-      "soldBy": soldBy,
-      "company": company,
-      "model": model,
-      "modelYear": modelYear,
-      "image": image,
-      "price": price,
-      "vinnumber": vinnumber,
-      "description": description
-    });
+          "sellerUID": uid,
+          "soldBy": soldBy,
+          "company": company,
+          "model": model,
+          "modelYear": modelYear,
+          "image": image,
+          "price": price,
+          "vinnumber": vinnumber,
+          "description": description
+        })
+        .then((value) => print("Added Product to User's Product Collection"))
+        .catchError((error) {
+          return error;
+        });
   }
 
   Future deleteProduct() async {
@@ -86,18 +101,36 @@ class DatabaseService {
         .doc(uid)
         .collection("Favorites")
         .doc("$CompanY-$ModeL-$ModelyeaR-$uid")
-        .delete();
+        .delete()
+        .then((value) => print("Deleted Product from Favorites"))
+        .catchError((error) {
+      return error;
+    });
     userCollection
         .doc(uid)
         .collection("Cart")
         .doc("$CompanY-$ModeL-$ModelyeaR-$uid")
-        .delete();
-    allProductsCollection.doc("$CompanY-$ModeL-$ModelyeaR-$uid").delete();
+        .delete()
+        .then((value) => print("Deleted Product from Cart"))
+        .catchError((error) {
+      return error;
+    });
+    allProductsCollection
+        .doc("$CompanY-$ModeL-$ModelyeaR-$uid")
+        .delete()
+        .then((value) => print("Deleted Product from All Products collection"))
+        .catchError((error) {
+      return error;
+    });
     return await userProductsCollection
         .doc(uid)
         .collection("Products")
         .doc("$CompanY-$ModeL-$ModelyeaR")
-        .delete();
+        .delete()
+        .then((value) => print("Deleted Product from User Products collection"))
+        .catchError((error) {
+      return error;
+    });
   }
 
   Future editUserProductsData(
@@ -116,76 +149,111 @@ class DatabaseService {
         .doc(uid)
         .collection("Favorites")
         .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
-        .delete();
+        .delete()
+        .then((value) => print("Deleted Product from Favorites"))
+        .catchError((error) {
+      return error;
+    });
     userCollection
         .doc(uid)
         .collection("Favorites")
         .doc("$company-$model-$modelYear-$uid")
         .set({
-      "sellerUID": uid,
-      "soldBy": soldBy,
-      "company": company,
-      "model": model,
-      "modelYear": modelYear,
-      "image": image,
-      "price": price,
-      "vinnumber": vinnumber,
-      "description": description
-    });
+          "sellerUID": uid,
+          "soldBy": soldBy,
+          "company": company,
+          "model": model,
+          "modelYear": modelYear,
+          "image": image,
+          "price": price,
+          "vinnumber": vinnumber,
+          "description": description
+        })
+        .then((value) => print("Added updated Product to Favorites"))
+        .catchError((error) {
+          return error;
+        });
     userCollection
         .doc(uid)
         .collection("Cart")
         .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
-        .delete();
+        .delete()
+        .then((value) => print("Deleted Product from Cart"))
+        .catchError((error) {
+      return error;
+    });
     userCollection
         .doc(uid)
         .collection("Cart")
         .doc("$company-$model-$modelYear-$uid")
         .set({
-      "sellerUID": uid,
-      "soldBy": soldBy,
-      "company": company,
-      "model": model,
-      "modelYear": modelYear,
-      "image": image,
-      "price": price,
-      "vinnumber": vinnumber,
-      "description": description
-    });
+          "sellerUID": uid,
+          "soldBy": soldBy,
+          "company": company,
+          "model": model,
+          "modelYear": modelYear,
+          "image": image,
+          "price": price,
+          "vinnumber": vinnumber,
+          "description": description
+        })
+        .then((value) => print("Added updated Product to Cart"))
+        .catchError((error) {
+          return error;
+        });
     allProductsCollection
         .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
-        .delete();
-    allProductsCollection.doc("$company-$model-$modelYear-$uid").set({
-      "sellerUID": uid,
-      "soldBy": soldBy,
-      "company": company,
-      "model": model,
-      "modelYear": modelYear,
-      "image": image,
-      "price": price,
-      "vinnumber": vinnumber,
-      "description": description
+        .delete()
+        .then((value) => print("Deleted Product from All Products collection"))
+        .catchError((error) {
+      return error;
     });
+    allProductsCollection
+        .doc("$company-$model-$modelYear-$uid")
+        .set({
+          "sellerUID": uid,
+          "soldBy": soldBy,
+          "company": company,
+          "model": model,
+          "modelYear": modelYear,
+          "image": image,
+          "price": price,
+          "vinnumber": vinnumber,
+          "description": description
+        })
+        .then((value) => print("Added updated Product to Favorites"))
+        .catchError((error) {
+          return error;
+        });
     userProductsCollection
         .doc(uid)
         .collection("Products")
         .doc("$oldCompany-$oldModel-$oldModelYear")
-        .delete();
+        .delete()
+        .then((value) => print("Deleted Product from User Products collection"))
+        .catchError((error) {
+      return error;
+    });
     return await userProductsCollection
         .doc(uid)
         .collection("Products")
         .doc("$company-$model-$modelYear")
         .set({
-      "sellerUID": uid,
-      "soldBy": soldBy,
-      "company": company,
-      "model": model,
-      "modelYear": modelYear,
-      "image": image,
-      "price": price,
-      "vinnumber": vinnumber,
-      "description": description
-    });
+          "sellerUID": uid,
+          "soldBy": soldBy,
+          "company": company,
+          "model": model,
+          "modelYear": modelYear,
+          "image": image,
+          "price": price,
+          "vinnumber": vinnumber,
+          "description": description
+        })
+        .then((value) =>
+            print("Added updated Product to User Product collection"))
+        .catchError((error) {
+          return error;
+        });
   }
 
   Future addProductToFavorites(
@@ -203,16 +271,20 @@ class DatabaseService {
         .collection("Favorites")
         .doc("$company-$model-$modelYear-$sellerUID")
         .set({
-      "sellerUID": sellerUID,
-      "soldBy": soldBy,
-      "company": company,
-      "model": model,
-      "modelYear": modelYear,
-      "image": image,
-      "price": price,
-      "vinnumber": vinnumber,
-      "description": description
-    });
+          "sellerUID": sellerUID,
+          "soldBy": soldBy,
+          "company": company,
+          "model": model,
+          "modelYear": modelYear,
+          "image": image,
+          "price": price,
+          "vinnumber": vinnumber,
+          "description": description
+        })
+        .then((value) => print("Added Product to Favorites"))
+        .catchError((error) {
+          return error;
+        });
   }
 
   Future deleteProductFromFavorites() async {
@@ -220,7 +292,11 @@ class DatabaseService {
         .doc(uid)
         .collection("Favorites")
         .doc("$CompanY-$ModeL-$ModelyeaR-$SelleruiD")
-        .delete();
+        .delete()
+        .then((value) => print("Deleted Product from Favorites"))
+        .catchError((error) {
+      return error;
+    });
   }
 
   Future addProductToCart(
@@ -238,16 +314,20 @@ class DatabaseService {
         .collection("Cart")
         .doc("$company-$model-$modelYear-$sellerUID")
         .set({
-      "sellerUID": sellerUID,
-      "soldBy": soldBy,
-      "company": company,
-      "model": model,
-      "modelYear": modelYear,
-      "image": image,
-      "price": price,
-      "vinnumber": vinnumber,
-      "description": description
-    });
+          "sellerUID": sellerUID,
+          "soldBy": soldBy,
+          "company": company,
+          "model": model,
+          "modelYear": modelYear,
+          "image": image,
+          "price": price,
+          "vinnumber": vinnumber,
+          "description": description
+        })
+        .then((value) => print("Added to Cart"))
+        .catchError((error) {
+          return error;
+        });
   }
 
   Future deleteProductFromCart() async {
@@ -255,7 +335,11 @@ class DatabaseService {
         .doc(uid)
         .collection("Cart")
         .doc("$CompanY-$ModeL-$ModelyeaR-$SelleruiD")
-        .delete();
+        .delete()
+        .then((value) => print("Deleted from Cart"))
+        .catchError((error) {
+      return error;
+    });
   }
 
   Future deleteAllProductsFromCart() async {
@@ -267,6 +351,8 @@ class DatabaseService {
       for (DocumentSnapshot ds in snapshot.docs) {
         ds.reference.delete();
       }
+    }).catchError((error) {
+      return error;
     });
   }
 
@@ -280,11 +366,19 @@ class DatabaseService {
         "Price": cartItems[i].price
       });
     }
-    return await userCollection.doc(uid).collection("Orders").doc().set({
-      "Product Count": cartItems.length,
-      "Bill Value": billValue,
-      "Products": products,
-    });
+    return await userCollection
+        .doc(uid)
+        .collection("Orders")
+        .doc()
+        .set({
+          "Product Count": cartItems.length,
+          "Bill Value": billValue,
+          "Products": products,
+        })
+        .then((value) => print("Order Placed"))
+        .catchError((error) {
+          return error;
+        });
   }
 
   Future<bool> productInFavorites() async {
