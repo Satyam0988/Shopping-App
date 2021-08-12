@@ -3,18 +3,17 @@ import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/screens/home/productpage.dart';
 import 'package:shopping_app/services/databse.dart';
-import 'package:shopping_app/shared/constants.dart';
 
-class ProductCard extends StatefulWidget {
-  //const ProductCard({Key? key}) : super(key: key);
+class FavoriteTile extends StatefulWidget {
+  //const FavoriteTile({ Key? key }) : super(key: key);
   final UserProductData product;
-  ProductCard({required this.product});
+  FavoriteTile({required this.product});
 
   @override
-  _ProductCardState createState() => _ProductCardState();
+  _FavoriteTileState createState() => _FavoriteTileState();
 }
 
-class _ProductCardState extends State<ProductCard> {
+class _FavoriteTileState extends State<FavoriteTile> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<userClass?>(context);
@@ -43,26 +42,29 @@ class _ProductCardState extends State<ProductCard> {
     });
 
     return Padding(
-      padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
+      padding: EdgeInsets.only(
+        left: 15.0,
+        right: 15.0,
+      ),
       child: GestureDetector(
         onTap: () {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    StreamProvider<List<UserProductData>>.value(
-                        value: DatabaseService(uid: user!.uid).userCartlist,
+                  builder: (context) =>
+                      StreamProvider<List<UserProductData>>.value(
+                        value: DatabaseService(uid: user.uid).userCartlist,
                         initialData: <UserProductData>[],
                         child: ProductPage(
                           product: widget.product,
                           addedToFavorites: addedToFavorites,
                           addedToCart: addedToCart,
-                        )),
-              ));
+                        ),
+                      )));
         },
         child: Container(
-          height: 250.0,
           width: double.infinity,
+          height: 300.0,
           child: Column(
             children: <Widget>[
               Container(
@@ -99,6 +101,25 @@ class _ProductCardState extends State<ProductCard> {
                           fontWeight: FontWeight.w600),
                     ),
                   ],
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  onPressed: () {
+                    DatabaseService(
+                            uid: user!.uid,
+                            CompanY: widget.product.company,
+                            ModeL: widget.product.model,
+                            ModelyeaR: widget.product.modelYear,
+                            SelleruiD: widget.product.sellerUID)
+                        .deleteProductFromFavorites();
+                  },
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.yellow[50],
+                  ),
+                  padding: EdgeInsets.only(left: 5.0),
                 ),
               ),
             ],

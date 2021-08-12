@@ -14,6 +14,7 @@ class UserProfileData {
 
 class UserProductData {
   final String uid;
+  final String sellerUID;
   final String soldBy;
   final String company;
   final String model;
@@ -25,6 +26,7 @@ class UserProductData {
 
   UserProductData({
     required this.uid,
+    required this.sellerUID,
     required this.soldBy,
     required this.price,
     required this.company,

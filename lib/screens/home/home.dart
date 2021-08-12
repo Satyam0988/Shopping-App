@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
+import 'package:shopping_app/screens/cart/cart.dart';
+import 'package:shopping_app/screens/favorites/favorites.dart';
 import 'package:shopping_app/screens/home/homecontent.dart';
 import 'package:shopping_app/screens/logout/logout.dart';
 import 'package:shopping_app/screens/settings/settings.dart';
@@ -34,6 +36,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<userClass?>(context);
+    final cartItems = Provider.of<List<UserProductData>>(context);
 
     return Scaffold(
       bottomNavigationBar: bottomNavBar(
@@ -91,7 +94,7 @@ class _HomeState extends State<Home> {
                             size: 25.0,
                           ),
                           Text(
-                            "4",
+                            "${cartItems.length}",
                             style: TextStyle(
                               fontSize: 25.0,
                               color: Colors.grey[900],
@@ -167,23 +170,21 @@ class _HomeState extends State<Home> {
                       value: DatabaseService(uid: user!.uid).userProductsList,
                       initialData: <UserProductData>[],
                       child: homeContent()),
-                Container(
-                  child: Center(
-                    child: Text("Favorites"),
-                  ),
-                ),
+                StreamProvider<List<UserProductData>>.value(
+                    value: DatabaseService(uid: user!.uid).userFavoriteslist,
+                    initialData: <UserProductData>[],
+                    child: FavoritesList()),
                 StreamProvider<UserProfileData>.value(
-                    value: DatabaseService(uid: user!.uid).userProfileData,
+                    value: DatabaseService(uid: user.uid).userProfileData,
                     initialData: UserProfileData(
                         image: defaultImageURL,
                         name: "New Member",
                         uid: user.uid),
                     child: Settings()),
-                Container(
-                  child: Center(
-                    child: Text("Cart"),
-                  ),
-                ),
+                StreamProvider<List<UserProductData>>.value(
+                    value: DatabaseService(uid: user.uid).userCartlist,
+                    initialData: <UserProductData>[],
+                    child: Cart()),
                 Logout(),
               ],
             ),

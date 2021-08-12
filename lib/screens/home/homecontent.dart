@@ -4,7 +4,7 @@ import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/screens/home/productcard.dart';
 
 class homeContent extends StatefulWidget {
-  const homeContent({Key? key}) : super(key: key);
+  //const homeContent({Key? key}) : super(key: key);
 
   @override
   _homeContentState createState() => _homeContentState();
@@ -21,7 +21,9 @@ class _homeContentState extends State<homeContent> {
           shrinkWrap: true,
           itemCount: Products.length,
           itemBuilder: (context, index) {
-            return ProductCard(product: Products[index]);
+            return ProductCard(
+              product: Products[index],
+            );
           }),
     );
   }

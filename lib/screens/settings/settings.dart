@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_app/models/orderdata.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/screens/settings/orderslist.dart';
 import 'package:shopping_app/screens/settings/productslist.dart';
@@ -36,8 +37,15 @@ class _SettingsState extends State<Settings> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => OrdersList()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              StreamProvider<List<OrderData>>.value(
+                                  value:
+                                      DatabaseService(uid: user.uid).userOrders,
+                                  initialData: <OrderData>[],
+                                  child: OrdersList())));
                 },
                 child: Container(
                   height: 80.0,
@@ -84,9 +92,8 @@ class _SettingsState extends State<Settings> {
                                 value: DatabaseService(uid: user.uid)
                                     .userProductsList,
                                 initialData: <UserProductData>[],
-                                child: ProductsList(
-                                  soldBy: userProfileData.name,
-                                ),
+                                child:
+                                    ProductsList(soldBy: userProfileData.name),
                               )));
                 },
                 child: Container(

@@ -20,10 +20,10 @@ class _ProductsListState extends State<ProductsList> {
     final Products = Provider.of<List<UserProductData>>(context);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.black,
         title: Text(
           "Your Products",
           style: TextStyle(
@@ -63,44 +63,48 @@ class _ProductsListState extends State<ProductsList> {
                     }),
               ],
             ))
-          : (Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: Products.length,
-                    itemBuilder: (context, index) {
-                      return ProductTile(product: Products[index]);
-                    },
+          : SingleChildScrollView(
+              physics: ScrollPhysics(),
+              child: (Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: Products.length,
+                      itemBuilder: (context, index) {
+                        return ProductTile(product: Products[index]);
+                      },
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      right: 10.0, bottom: 10.0, top: 15.0),
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: FloatingActionButton(
-                        tooltip: "Add a new Product",
-                        backgroundColor: Colors.green,
-                        child: Icon(
-                          Icons.add,
-                          size: 40.0,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => addProduct(
-                                        soldBy: widget.soldBy,
-                                      )));
-                        }),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        right: 10.0, bottom: 10.0, top: 15.0),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: FloatingActionButton(
+                          tooltip: "Add a new Product",
+                          backgroundColor: Colors.green,
+                          child: Icon(
+                            Icons.add,
+                            size: 40.0,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => addProduct(
+                                          soldBy: widget.soldBy,
+                                        )));
+                          }),
+                    ),
                   ),
-                ),
-              ],
-            )),
+                ],
+              )),
+            ),
     );
   }
 }

@@ -36,10 +36,10 @@ class _addProductState extends State<addProduct> {
     final user = Provider.of<userClass?>(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Colors.black,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.grey[900],
         title: Text(
           "Add a new Product",
           style: TextStyle(

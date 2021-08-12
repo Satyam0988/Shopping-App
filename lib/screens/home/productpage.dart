@@ -1,19 +1,38 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
+import 'package:shopping_app/services/databse.dart';
 
 class ProductPage extends StatefulWidget {
-  //const ProductPage({ Key? key }) : super(key: key);
   final UserProductData product;
-  ProductPage({required this.product});
+  final bool addedToFavorites;
+  final bool addedToCart;
+  ProductPage(
+      {required this.product,
+      required this.addedToFavorites,
+      required this.addedToCart});
 
   @override
   _ProductPageState createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
+  bool addedToCart = false;
+  bool addedToFavorites = false;
+
+  @override
+  void initState() {
+    addedToFavorites = widget.addedToFavorites;
+    addedToCart = widget.addedToCart;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<userClass?>(context);
+    final cartItems = Provider.of<List<UserProductData>>(context);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: PreferredSize(
@@ -23,12 +42,12 @@ class _ProductPageState extends State<ProductPage> {
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(
-                  left: 10.0, right: 7.0, top: 5.0, bottom: 7.0),
+                  left: 10.0, right: 20.0, top: 5.0, bottom: 7.0),
               child: Container(
                 width: 60.0,
                 height: 40.0,
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.yellow[50],
                     borderRadius: BorderRadius.circular(15.0)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -39,7 +58,7 @@ class _ProductPageState extends State<ProductPage> {
                       size: 25.0,
                     ),
                     Text(
-                      "4",
+                      "${cartItems.length}",
                       style: TextStyle(
                         fontSize: 25.0,
                         color: Colors.grey[900],
@@ -121,7 +140,30 @@ class _ProductPageState extends State<ProductPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        addedToFavorites = !addedToFavorites;
+                        addedToFavorites
+                            ? DatabaseService(uid: user!.uid)
+                                .addProductToFavorites(
+                                    widget.product.soldBy,
+                                    widget.product.sellerUID,
+                                    widget.product.company,
+                                    widget.product.model,
+                                    widget.product.modelYear,
+                                    widget.product.image,
+                                    widget.product.price,
+                                    widget.product.vinnumber,
+                                    widget.product.description)
+                            : DatabaseService(
+                                    uid: user!.uid,
+                                    CompanY: widget.product.company,
+                                    ModeL: widget.product.model,
+                                    ModelyeaR: widget.product.modelYear,
+                                    SelleruiD: widget.product.sellerUID)
+                                .deleteProductFromFavorites();
+                      });
+                    },
                     child: Container(
                         height: 50.0,
                         width: 60.0,
@@ -132,27 +174,57 @@ class _ProductPageState extends State<ProductPage> {
                         child: Icon(
                           Icons.favorite,
                           size: 27.0,
-                          color: Colors.grey[600],
+                          color:
+                              addedToFavorites ? Colors.red : Colors.grey[600],
                         )),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        addedToCart = !addedToCart;
+                        addedToCart
+                            ? DatabaseService(uid: user!.uid).addProductToCart(
+                                widget.product.soldBy,
+                                widget.product.sellerUID,
+                                widget.product.company,
+                                widget.product.model,
+                                widget.product.modelYear,
+                                widget.product.image,
+                                widget.product.price,
+                                widget.product.vinnumber,
+                                widget.product.description)
+                            : DatabaseService(
+                                    uid: user!.uid,
+                                    CompanY: widget.product.company,
+                                    ModeL: widget.product.model,
+                                    ModelyeaR: widget.product.modelYear,
+                                    SelleruiD: widget.product.sellerUID)
+                                .deleteProductFromCart();
+                      });
+                    },
                     child: Container(
                       height: 50.0,
                       width: 300.0,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: addedToCart ? Colors.green : Colors.white,
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: Center(
-                          child: Text(
-                        "Add to Cart",
-                        style: TextStyle(
-                            color: Colors.grey[900],
-                            fontSize: 24.0,
-                            fontFamily: "Roboto",
-                            fontWeight: FontWeight.bold),
-                      )),
+                          child: addedToCart
+                              ? Text("Added to Cart",
+                                  style: TextStyle(
+                                      color: Colors.yellow[50],
+                                      fontSize: 24.0,
+                                      fontFamily: "Roboto",
+                                      fontWeight: FontWeight.bold))
+                              : Text(
+                                  "Add to Cart",
+                                  style: TextStyle(
+                                      color: Colors.grey[900],
+                                      fontSize: 24.0,
+                                      fontFamily: "Roboto",
+                                      fontWeight: FontWeight.bold),
+                                )),
                     ),
                   ),
                 ],
