@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/services/databse.dart';
+import 'package:shopping_app/services/storage.dart';
 import 'package:shopping_app/shared/constants.dart';
 import 'package:shopping_app/shared/errordialog.dart';
 // ignore: unused_import
@@ -22,17 +24,20 @@ class addProduct extends StatefulWidget {
 // ignore: camel_case_types
 class _addProductState extends State<addProduct> {
   final _formKey = GlobalKey<FormState>();
+  final _picker = ImagePicker();
+  dynamic image = "0";
 
   //form values
   String _currentCompany = "-1";
   String _currentModel = "-1";
   String _currentModelYear = "-1";
-  String _currentImage = "-1";
+  String imageURL = "0";
   String _currentVINnumber = "-1";
   String _currentDescription = "-1";
   String _currentPrice = "-1";
 
   bool loading = false;
+  bool pickedImage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +54,14 @@ class _addProductState extends State<addProduct> {
     return loading
         ? Loading()
         : Scaffold(
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.grey[900],
             appBar: AppBar(
               centerTitle: true,
-              backgroundColor: Colors.grey[900],
+              backgroundColor: Colors.black,
               title: Text(
                 "Add a new Product",
                 style: TextStyle(
-                    color: Colors.yellow[50],
+                    color: Colors.green,
                     fontSize: 24.0,
                     fontWeight: FontWeight.w900),
               ),
@@ -88,7 +93,7 @@ class _addProductState extends State<addProduct> {
                           autofocus: true,
                           textInputAction: TextInputAction.next,
                           style: TextStyle(color: Colors.white),
-                          decoration: textInputDecoration,
+                          decoration: addProductInputDecoration,
                           validator: (val) => val!.isEmpty
                               ? "Please enter a Company name"
                               : null,
@@ -115,7 +120,7 @@ class _addProductState extends State<addProduct> {
                         TextFormField(
                           style: TextStyle(color: Colors.white),
                           textInputAction: TextInputAction.next,
-                          decoration: textInputDecoration,
+                          decoration: addProductInputDecoration,
                           validator: (val) =>
                               val!.isEmpty ? "Please enter a Model name" : null,
                           onChanged: (val) {
@@ -141,7 +146,7 @@ class _addProductState extends State<addProduct> {
                         TextFormField(
                           style: TextStyle(color: Colors.white),
                           textInputAction: TextInputAction.next,
-                          decoration: textInputDecoration,
+                          decoration: addProductInputDecoration,
                           validator: (val) =>
                               val!.isEmpty ? "Please enter a Model Year" : null,
                           onChanged: (val) {
@@ -167,7 +172,7 @@ class _addProductState extends State<addProduct> {
                         TextFormField(
                           style: TextStyle(color: Colors.white),
                           textInputAction: TextInputAction.next,
-                          decoration: textInputDecoration,
+                          decoration: addProductInputDecoration,
                           validator: (val) =>
                               val!.isEmpty ? "Please enter a VIN Number" : null,
                           onChanged: (val) {
@@ -193,7 +198,7 @@ class _addProductState extends State<addProduct> {
                         TextFormField(
                           style: TextStyle(color: Colors.white),
                           textInputAction: TextInputAction.next,
-                          decoration: textInputDecoration,
+                          decoration: addProductInputDecoration,
                           validator: (val) => val!.isEmpty
                               ? "Please enter a Description"
                               : null,
@@ -206,29 +211,66 @@ class _addProductState extends State<addProduct> {
                         SizedBox(
                           height: 25.0,
                         ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Image URL",
-                            style: TextStyle(
-                              color: Colors.yellow[50],
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w300,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Image",
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.yellow[50]),
                             ),
-                          ),
+                            IconButton(
+                                onPressed: () async {
+                                  image = await _picker.pickImage(
+                                      source: ImageSource.camera);
+                                  if (image != null) {
+                                    setState(() {
+                                      pickedImage = true;
+                                    });
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.camera_alt,
+                                  size: 28.0,
+                                  color: Colors.yellow[50],
+                                )),
+                            IconButton(
+                                onPressed: () async {
+                                  image = await _picker.pickImage(
+                                      source: ImageSource.gallery);
+                                  if (image != null) {
+                                    setState(() {
+                                      pickedImage = true;
+                                    });
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.photo,
+                                  size: 28.0,
+                                  color: Colors.yellow[50],
+                                )),
+                          ],
                         ),
-                        TextFormField(
-                          style: TextStyle(color: Colors.white),
-                          textInputAction: TextInputAction.next,
-                          decoration: textInputDecoration,
-                          validator: (val) =>
-                              val!.isEmpty ? "Please enter an Image URL" : null,
-                          onChanged: (val) {
-                            setState(() {
-                              _currentImage = val;
-                            });
-                          },
-                        ),
+                        Visibility(
+                            visible: pickedImage,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 300.0,
+                                  child: Text(
+                                    pickedImage ? "${image.name}" : "Text",
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                )
+                              ],
+                            )),
                         SizedBox(
                           height: 25.0,
                         ),
@@ -246,7 +288,7 @@ class _addProductState extends State<addProduct> {
                         TextFormField(
                           style: TextStyle(color: Colors.white),
                           textInputAction: TextInputAction.done,
-                          decoration: textInputDecoration,
+                          decoration: addProductInputDecoration,
                           validator: (val) =>
                               val!.isEmpty ? "Please enter a Price" : null,
                           onChanged: (val) {
@@ -261,30 +303,50 @@ class _addProductState extends State<addProduct> {
                         GestureDetector(
                           onTap: () async {
                             if (_formKey.currentState!.validate()) {
-                              setState(() {
-                                loading = true;
-                              });
-                              dynamic result =
-                                  await DatabaseService(uid: user!.uid)
-                                      .addUserProductsData(
-                                          widget.soldBy,
-                                          _currentCompany,
-                                          _currentModel,
-                                          _currentModelYear,
-                                          _currentImage,
-                                          _currentPrice,
-                                          _currentVINnumber,
-                                          _currentDescription);
-                              if (result != null) {
+                              if (pickedImage) {
                                 setState(() {
-                                  loading = false;
-                                  _showErrorDialog("Could not add Product");
+                                  loading = true;
                                 });
+                                dynamic res = await StorageService(
+                                        uid: user!.uid,
+                                        imagePath: image.path,
+                                        company: _currentCompany,
+                                        model: _currentModel,
+                                        modelYear: _currentModelYear)
+                                    .uploadProductImage();
+                                if (res == null) {
+                                  //print("Getting image");
+                                  imageURL = await StorageService(
+                                          sellerUID: user.uid,
+                                          company: _currentCompany,
+                                          model: _currentModel,
+                                          modelYear: _currentModelYear)
+                                      .getProductImage();
+                                }
+                                dynamic result =
+                                    await DatabaseService(uid: user.uid)
+                                        .addUserProductsData(
+                                            widget.soldBy,
+                                            _currentCompany,
+                                            _currentModel,
+                                            _currentModelYear,
+                                            imageURL,
+                                            _currentPrice,
+                                            _currentVINnumber,
+                                            _currentDescription);
+                                if (result != null && res != null) {
+                                  setState(() {
+                                    loading = false;
+                                    _showErrorDialog("Could not add Product");
+                                  });
+                                } else {
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                  Navigator.pop(context);
+                                }
                               } else {
-                                setState(() {
-                                  loading = false;
-                                });
-                                Navigator.pop(context);
+                                _showErrorDialog("Please Pick an image");
                               }
                             }
                           },

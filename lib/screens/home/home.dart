@@ -23,6 +23,14 @@ class _HomeState extends State<Home> {
   late PageController _pageController = PageController();
   int selected = 1;
 
+  Future<void> _showLogoutDialog() async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Logout();
+        });
+  }
+
   void initState() {
     _pageController = PageController();
     super.initState();
@@ -42,8 +50,12 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: bottomNavBar(
         selected: selected,
         tabChanged: (tabNo) {
-          _pageController.animateToPage(tabNo - 1,
-              duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+          if (tabNo != 5) {
+            _pageController.animateToPage(tabNo - 1,
+                duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+          } else {
+            _showLogoutDialog();
+          }
         },
       ),
       body: Column(
@@ -59,7 +71,7 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   (selected == 1)
-                      ? searchBox()
+                      ? Expanded(child: Text("Home", style: regularBoldHeading))
                       : (selected == 2)
                           ? Expanded(
                               child:

@@ -79,7 +79,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
               onPressed: () {
                 widget.tabChanged(4);
               },
-              icon: Icon(Icons.shopping_bag),
+              icon: Icon(Icons.shopping_cart),
               iconSize: 35.0,
               color: (_selected == 4) ? Colors.green : Colors.yellow[50],
             ),

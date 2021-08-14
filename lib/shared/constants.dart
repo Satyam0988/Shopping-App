@@ -17,6 +17,21 @@ InputDecoration textInputDecoration = InputDecoration(
   ),
 );
 
+InputDecoration addProductInputDecoration = InputDecoration(
+  enabledBorder: UnderlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.yellow.shade50,
+      width: 1.5,
+    ),
+  ),
+  focusedBorder: UnderlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.green,
+      width: 2.75,
+    ),
+  ),
+);
+
 BoxDecoration customBoxDecoration = BoxDecoration(
   color: Colors.black,
   // gradient: LinearGradient(

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shopping_app/models/orderdata.dart';
 import 'package:shopping_app/models/userClass.dart';
+import 'package:shopping_app/services/storage.dart';
 import 'package:shopping_app/shared/constants.dart';
 
 class DatabaseService {
@@ -58,7 +59,7 @@ class DatabaseService {
       String price,
       String vinnumber,
       String description) async {
-    allProductsCollection
+    await allProductsCollection
         .doc("$company-$model-$modelYear-$uid")
         .set({
           "sellerUID": uid,
@@ -96,26 +97,37 @@ class DatabaseService {
         });
   }
 
-  Future deleteProduct() async {
-    userCollection
-        .doc(uid)
-        .collection("Favorites")
-        .doc("$CompanY-$ModeL-$ModelyeaR-$uid")
-        .delete()
-        .then((value) => print("Deleted Product from Favorites"))
+  Future deleteProduct(bool addedToFavorites, bool addedToCart) async {
+    if (addedToFavorites) {
+      await userCollection
+          .doc(uid)
+          .collection("Favorites")
+          .doc("$CompanY-$ModeL-$ModelyeaR-$uid")
+          .delete()
+          .then((value) => print("Deleted Product from Favorites"))
+          .catchError((error) {
+        return error;
+      });
+    }
+    if (addedToCart) {
+      await userCollection
+          .doc(uid)
+          .collection("Cart")
+          .doc("$CompanY-$ModeL-$ModelyeaR-$uid")
+          .delete()
+          .then((value) => print("Deleted Product from Cart"))
+          .catchError((error) {
+        return error;
+      });
+    }
+    await StorageService(
+            uid: uid, company: CompanY, model: ModeL, modelYear: ModelyeaR)
+        .deleteImage()
+        .then((value) => print("Deleted image from Storage"))
         .catchError((error) {
       return error;
     });
-    userCollection
-        .doc(uid)
-        .collection("Cart")
-        .doc("$CompanY-$ModeL-$ModelyeaR-$uid")
-        .delete()
-        .then((value) => print("Deleted Product from Cart"))
-        .catchError((error) {
-      return error;
-    });
-    allProductsCollection
+    await allProductsCollection
         .doc("$CompanY-$ModeL-$ModelyeaR-$uid")
         .delete()
         .then((value) => print("Deleted Product from All Products collection"))
@@ -144,116 +156,189 @@ class DatabaseService {
       String image,
       String price,
       String vinnumber,
-      String description) async {
-    userCollection
-        .doc(uid)
-        .collection("Favorites")
-        .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
-        .delete()
-        .then((value) => print("Deleted Product from Favorites"))
-        .catchError((error) {
-      return error;
-    });
-    userCollection
-        .doc(uid)
-        .collection("Favorites")
-        .doc("$company-$model-$modelYear-$uid")
-        .set({
-          "sellerUID": uid,
-          "soldBy": soldBy,
-          "company": company,
-          "model": model,
-          "modelYear": modelYear,
-          "image": image,
-          "price": price,
-          "vinnumber": vinnumber,
-          "description": description
-        })
-        .then((value) => print("Added updated Product to Favorites"))
-        .catchError((error) {
+      String description,
+      bool addedToFavorites,
+      bool addedToCart) async {
+    if (oldCompany == company &&
+        oldModel == model &&
+        oldModelYear == modelYear) {
+      if (addedToFavorites) {
+        await userCollection
+            .doc(uid)
+            .collection("Favorites")
+            .doc("$company-$model-$modelYear-$uid")
+            .update({
+              "image": image,
+              "price": price,
+              "vinnumber": vinnumber,
+              "description": description
+            })
+            .then((value) => print("Updated Product in Favorites"))
+            .catchError((error) {
+              return error;
+            });
+      }
+      if (addedToCart) {
+        await userCollection
+            .doc(uid)
+            .collection("Cart")
+            .doc("$company-$model-$modelYear-$uid")
+            .update({
+              "image": image,
+              "price": price,
+              "vinnumber": vinnumber,
+              "description": description
+            })
+            .then((value) => print("Updated Product in Cart"))
+            .catchError((error) {
+              return error;
+            });
+      }
+      await allProductsCollection
+          .doc("$company-$model-$modelYear-$uid")
+          .update({
+            "image": image,
+            "price": price,
+            "vinnumber": vinnumber,
+            "description": description
+          })
+          .then((value) => print("Updated Product in All products Collection"))
+          .catchError((error) {
+            return error;
+          });
+      return await userProductsCollection
+          .doc(uid)
+          .collection("Products")
+          .doc("$company-$model-$modelYear")
+          .update({
+            "image": image,
+            "price": price,
+            "vinnumber": vinnumber,
+            "description": description
+          })
+          .then((value) =>
+              print("Added updated Product to User Product collection"))
+          .catchError((error) {
+            return error;
+          });
+    } else {
+      if (addedToFavorites) {
+        await userCollection
+            .doc(uid)
+            .collection("Favorites")
+            .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
+            .delete()
+            .then((value) => print("Deleted Product from Favorites"))
+            .catchError((error) {
           return error;
         });
-    userCollection
-        .doc(uid)
-        .collection("Cart")
-        .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
-        .delete()
-        .then((value) => print("Deleted Product from Cart"))
-        .catchError((error) {
-      return error;
-    });
-    userCollection
-        .doc(uid)
-        .collection("Cart")
-        .doc("$company-$model-$modelYear-$uid")
-        .set({
-          "sellerUID": uid,
-          "soldBy": soldBy,
-          "company": company,
-          "model": model,
-          "modelYear": modelYear,
-          "image": image,
-          "price": price,
-          "vinnumber": vinnumber,
-          "description": description
-        })
-        .then((value) => print("Added updated Product to Cart"))
-        .catchError((error) {
+        await userCollection
+            .doc(uid)
+            .collection("Favorites")
+            .doc("$company-$model-$modelYear-$uid")
+            .set({
+              "sellerUID": uid,
+              "soldBy": soldBy,
+              "company": company,
+              "model": model,
+              "modelYear": modelYear,
+              "image": image,
+              "price": price,
+              "vinnumber": vinnumber,
+              "description": description
+            })
+            .then((value) => print("Added updated Product to Favorites"))
+            .catchError((error) {
+              return error;
+            });
+      }
+      if (addedToCart) {
+        userCollection
+            .doc(uid)
+            .collection("Cart")
+            .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
+            .delete()
+            .then((value) => print("Deleted Product from Cart"))
+            .catchError((error) {
           return error;
         });
-    allProductsCollection
-        .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
-        .delete()
-        .then((value) => print("Deleted Product from All Products collection"))
-        .catchError((error) {
-      return error;
-    });
-    allProductsCollection
-        .doc("$company-$model-$modelYear-$uid")
-        .set({
-          "sellerUID": uid,
-          "soldBy": soldBy,
-          "company": company,
-          "model": model,
-          "modelYear": modelYear,
-          "image": image,
-          "price": price,
-          "vinnumber": vinnumber,
-          "description": description
-        })
-        .then((value) => print("Added updated Product to Favorites"))
-        .catchError((error) {
-          return error;
-        });
-    userProductsCollection
-        .doc(uid)
-        .collection("Products")
-        .doc("$oldCompany-$oldModel-$oldModelYear")
-        .delete()
-        .then((value) => print("Deleted Product from User Products collection"))
-        .catchError((error) {
-      return error;
-    });
-    return await userProductsCollection
-        .doc(uid)
-        .collection("Products")
-        .doc("$company-$model-$modelYear")
-        .set({
-          "sellerUID": uid,
-          "soldBy": soldBy,
-          "company": company,
-          "model": model,
-          "modelYear": modelYear,
-          "image": image,
-          "price": price,
-          "vinnumber": vinnumber,
-          "description": description
-        })
-        .then((value) =>
-            print("Added updated Product to User Product collection"))
-        .catchError((error) {
-          return error;
-        });
+        await userCollection
+            .doc(uid)
+            .collection("Cart")
+            .doc("$company-$model-$modelYear-$uid")
+            .set({
+              "sellerUID": uid,
+              "soldBy": soldBy,
+              "company": company,
+              "model": model,
+              "modelYear": modelYear,
+              "image": image,
+              "price": price,
+              "vinnumber": vinnumber,
+              "description": description
+            })
+            .then((value) => print("Added updated Product to Cart"))
+            .catchError((error) {
+              return error;
+            });
+      }
+      await allProductsCollection
+          .doc("$oldCompany-$oldModel-$oldModelYear-$uid")
+          .delete()
+          .then(
+              (value) => print("Deleted Product from All Products collection"))
+          .catchError((error) {
+        return error;
+      });
+      await allProductsCollection
+          .doc("$company-$model-$modelYear-$uid")
+          .set({
+            "sellerUID": uid,
+            "soldBy": soldBy,
+            "company": company,
+            "model": model,
+            "modelYear": modelYear,
+            "image": image,
+            "price": price,
+            "vinnumber": vinnumber,
+            "description": description
+          })
+          .then((value) =>
+              print("Added updated Product to All products Collection"))
+          .catchError((error) {
+            return error;
+          });
+      await userProductsCollection
+          .doc(uid)
+          .collection("Products")
+          .doc("$oldCompany-$oldModel-$oldModelYear")
+          .delete()
+          .then(
+              (value) => print("Deleted Product from User Products collection"))
+          .catchError((error) {
+        return error;
+      });
+      return await userProductsCollection
+          .doc(uid)
+          .collection("Products")
+          .doc("$company-$model-$modelYear")
+          .set({
+            "sellerUID": uid,
+            "soldBy": soldBy,
+            "company": company,
+            "model": model,
+            "modelYear": modelYear,
+            "image": image,
+            "price": price,
+            "vinnumber": vinnumber,
+            "description": description
+          })
+          .then((value) =>
+              print("Added updated Product to User Product collection"))
+          .catchError((error) {
+            return error;
+          });
+    }
   }
 
   Future addProductToFavorites(

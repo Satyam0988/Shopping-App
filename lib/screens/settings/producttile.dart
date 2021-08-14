@@ -116,7 +116,7 @@ class _ProductTileState extends State<ProductTile> {
                               CompanY: widget.product.company,
                               ModeL: widget.product.model,
                               ModelyeaR: widget.product.modelYear)
-                          .deleteProduct();
+                          .deleteProduct(addedToFavorites, addedToCart);
                       if (result == null) {
                         _showErrorDialog("Could not delete Product");
                       }

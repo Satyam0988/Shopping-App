@@ -17,14 +17,22 @@ class _homeContentState extends State<homeContent> {
 
     return Scaffold(
       backgroundColor: Colors.grey[900],
-      body: ListView.builder(
-          shrinkWrap: true,
-          itemCount: Products.length,
-          itemBuilder: (context, index) {
-            return ProductCard(
-              product: Products[index],
-            );
-          }),
+      body: Products.length == 0
+          ? Align(
+              alignment: Alignment.center,
+              child: Text(
+                " No Products are available\n         at the moment.",
+                style: TextStyle(color: Colors.yellow[50], fontSize: 32.0),
+              ),
+            )
+          : ListView.builder(
+              shrinkWrap: true,
+              itemCount: Products.length,
+              itemBuilder: (context, index) {
+                return ProductCard(
+                  product: Products[index],
+                );
+              }),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:shopping_app/models/userClass.dart';
 // ignore: unused_import
 import 'package:shopping_app/shared/constants.dart';
 import 'package:shopping_app/screens/settings/editprofile.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -40,10 +41,24 @@ class _ProfileState extends State<Profile> {
             top: 20.0,
             bottom: 20.0,
           ),
-          child: CircleAvatar(
-            radius: 70.0,
-            backgroundImage: NetworkImage(userProfileData.image),
-          ),
+          child: Stack(children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 50.0),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            Center(
+              child: SizedBox(
+                height: 150.0,
+                width: 150.0,
+                child: ClipOval(
+                    child: FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: userProfileData.image,
+                  fit: BoxFit.fill,
+                )),
+              ),
+            ),
+          ]),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -64,7 +79,7 @@ class _ProfileState extends State<Profile> {
                 right: 30.0,
               ),
               child: IconButton(
-                onPressed: () {
+                onPressed: () async {
                   _showEditProfilePanel();
                 },
                 icon: Icon(
