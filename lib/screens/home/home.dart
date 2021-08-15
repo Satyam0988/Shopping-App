@@ -9,7 +9,6 @@ import 'package:shopping_app/screens/settings/settings.dart';
 import 'package:shopping_app/services/databse.dart';
 import 'package:shopping_app/shared/constants.dart';
 import 'package:shopping_app/screens/home/bottomnavbar.dart';
-import 'package:shopping_app/screens/home/searchBox.dart';
 
 class Home extends StatefulWidget {
   //const Home({Key? key}) : super(key: key);
@@ -197,7 +196,6 @@ class _HomeState extends State<Home> {
                     value: DatabaseService(uid: user.uid).userCartlist,
                     initialData: <UserProductData>[],
                     child: Cart()),
-                Logout(),
               ],
             ),
           ),

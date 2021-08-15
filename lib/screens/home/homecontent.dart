@@ -25,14 +25,24 @@ class _homeContentState extends State<homeContent> {
                 style: TextStyle(color: Colors.yellow[50], fontSize: 32.0),
               ),
             )
-          : ListView.builder(
-              shrinkWrap: true,
-              itemCount: Products.length,
-              itemBuilder: (context, index) {
-                return ProductCard(
-                  product: Products[index],
+          : TweenAnimationBuilder(
+              tween: Tween<double>(begin: 1, end: 0),
+              duration: Duration(milliseconds: 500),
+              builder: (BuildContext context, double _val, Widget? child) {
+                return Padding(
+                  padding: EdgeInsets.only(top: _val * 200),
+                  child: child,
                 );
-              }),
+              },
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: Products.length,
+                  itemBuilder: (context, index) {
+                    return ProductCard(
+                      product: Products[index],
+                    );
+                  }),
+            ),
     );
   }
 }

@@ -35,7 +35,7 @@ class _LogoutState extends State<Logout> {
         content: Center(
           child: Text(
             "Are you sure you want to Logout?",
-            style: TextStyle(color: Colors.red, fontSize: 20.0),
+            style: TextStyle(color: Colors.black, fontSize: 20.0),
           ),
         ),
         actions: <Widget>[
@@ -46,7 +46,7 @@ class _LogoutState extends State<Logout> {
             child: Text(
               "No",
               style: TextStyle(
-                  color: Colors.green,
+                  color: Colors.black,
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold),
             ),
@@ -63,7 +63,7 @@ class _LogoutState extends State<Logout> {
             child: Text(
               "Yes",
               style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.black,
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold),
             ),

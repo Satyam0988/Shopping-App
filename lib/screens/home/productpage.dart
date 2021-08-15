@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/services/databse.dart';
 import 'package:shopping_app/shared/errordialog.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProductPage extends StatefulWidget {
   final UserProductData product;
@@ -18,9 +18,14 @@ class ProductPage extends StatefulWidget {
   _ProductPageState createState() => _ProductPageState();
 }
 
-class _ProductPageState extends State<ProductPage> {
+class _ProductPageState extends State<ProductPage>
+    with SingleTickerProviderStateMixin {
   bool addedToCart = false;
   bool addedToFavorites = false;
+
+  late AnimationController _controller;
+  //late Animation<Color?> _colorAnimation;
+  late Animation<double> _sizeAnimation;
 
   Future<void> _showErrorDialog(String error) async {
     return showDialog(
@@ -35,6 +40,26 @@ class _ProductPageState extends State<ProductPage> {
     addedToFavorites = widget.addedToFavorites;
     addedToCart = widget.addedToCart;
     super.initState();
+    _controller = AnimationController(
+      duration: Duration(milliseconds: 50),
+      vsync: this,
+    );
+
+    // _colorAnimation = ColorTween(begin: Colors.grey[600], end: Colors.red)
+    //     .animate(_controller);
+
+    _sizeAnimation = TweenSequence(<TweenSequenceItem<double>>[
+      TweenSequenceItem<double>(
+          tween: Tween<double>(begin: 27, end: 35), weight: 50),
+      TweenSequenceItem<double>(
+          tween: Tween<double>(begin: 35, end: 27), weight: 50),
+    ]).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -87,13 +112,28 @@ class _ProductPageState extends State<ProductPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: Image(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(widget.product.image),
+              Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 75.0),
+                  child: Center(child: CircularProgressIndicator()),
                 ),
-              ),
+                Container(
+                  height: 200.0,
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Hero(
+                      tag:
+                          "${widget.product.company}-${widget.product.model}-${widget.product.modelYear}-${widget.product.sellerUID}",
+                      child: FadeInImage.memoryNetwork(
+                        placeholder: kTransparentImage,
+                        image: widget.product.image,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
               SizedBox(
                 height: 20.0,
               ),
@@ -171,9 +211,7 @@ class _ProductPageState extends State<ProductPage> {
                             _showErrorDialog("Could not add to Favorites");
                           });
                         } else {
-                          setState(() {
-                            addedToFavorites = true;
-                          });
+                          _controller.forward();
                         }
                       } else if (addedToFavorites == false) {
                         dynamic result = await DatabaseService(
@@ -189,9 +227,7 @@ class _ProductPageState extends State<ProductPage> {
                             _showErrorDialog("Could not Delete from Favorites");
                           });
                         } else {
-                          setState(() {
-                            addedToFavorites = false;
-                          });
+                          _controller.reverse();
                         }
                       }
                     },
@@ -202,11 +238,17 @@ class _ProductPageState extends State<ProductPage> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15.0),
                         ),
-                        child: Icon(
-                          Icons.favorite,
-                          size: 27.0,
-                          color:
-                              addedToFavorites ? Colors.red : Colors.grey[600],
+                        child: AnimatedBuilder(
+                          animation: _controller,
+                          builder: (BuildContext context, _) {
+                            return Icon(
+                              Icons.favorite,
+                              size: _sizeAnimation.value,
+                              color: addedToFavorites
+                                  ? Colors.red
+                                  : Colors.grey[600],
+                            );
+                          },
                         )),
                   ),
                   GestureDetector(
@@ -283,6 +325,9 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ],
               ),
+              SizedBox(
+                height: 15.0,
+              )
             ],
           ),
         ),

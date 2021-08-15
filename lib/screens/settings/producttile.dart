@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:shopping_app/models/userClass.dart';
 import 'package:shopping_app/screens/home/productpage.dart';
 import 'package:shopping_app/services/databse.dart';
-import 'package:shopping_app/shared/constants.dart';
 import 'package:shopping_app/screens/settings/editproduct.dart';
 import 'package:shopping_app/shared/errordialog.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProductTile extends StatefulWidget {
   //const ProductTile({ Key? key }) : super(key: key);
@@ -78,11 +78,25 @@ class _ProductTileState extends State<ProductTile> {
             elevation: 5.0,
             color: Colors.yellow[50],
             child: ListTile(
-              leading: Image(
-                image: NetworkImage(widget.product.image),
-                height: 90.0,
-                width: 50.0,
-              ),
+              leading: Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, top: 20.0),
+                  child: SizedBox(
+                      height: 10.0,
+                      width: 10.0,
+                      child: CircularProgressIndicator()),
+                ),
+                Hero(
+                  tag:
+                      "${widget.product.company}-${widget.product.model}-${widget.product.modelYear}-${widget.product.sellerUID}",
+                  child: FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image: widget.product.image,
+                    height: 150.0,
+                    width: 70.0,
+                  ),
+                ),
+              ]),
               title: Text(
                 "${widget.product.company}  ${widget.product.model}",
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),
